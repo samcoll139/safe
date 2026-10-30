@@ -1,70 +1,52 @@
 
-name: Build SafeGuard AI APK
+name: Build Android APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   build:
-    name: Build Android APK
+    name: Build Flutter APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '17'
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
-          node-version: "22"
+          channel: stable
+          cache: true
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Check Flutter
+        run: flutter doctor -v
 
-      - name: Install npm dependencies
-        run: npm install --no-audit --no-fund
+      - name: Install Dependencies
+        run: flutter pub get
 
-      - name: Prepare web assets
-        run: |
-          mkdir -p www
-          rsync -av ./ www/ \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='node_modules/' \
-            --exclude='android/' \
-            --exclude='www/' \
-            --exclude='package.json' \
-            --exclude='package-lock.json' \
-            --exclude='capacitor.config.json'
+      - name: Build Release APK
+        run: flutter build apk --release
 
-      - name: Add Android platform
-        run: npx cap add android
-
-      - name: Sync web assets with Android
-        run: npx cap sync android
-
-      - name: Build debug APK
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: SafeGuard-AI-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           retention-days: 14
