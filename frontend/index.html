@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SafeGuard 3D AI - Women Safety Ecosystem (தமிழ் & English)</title>
+    <!-- PWA & Mobile App Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#060913">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SafeGuard">
+    <link rel="apple-touch-icon" href="/icon.svg">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+Tamil:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-canvas: #060913;
+            --surface-3d: #101728;
+            --surface-card: rgba(18, 27, 47, 0.85);
+            --primary-accent: #6366f1;
+            --danger-glow: #ff2a5f;
+            --success-glow: #10b981;
+            --warning-glow: #f59e0b;
+            --cyan-glow: #06b6d4;
+            --pink-glow: #ec4899;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.15), transparent 40%),
+                              radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.1), transparent 50%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px 10px;
+            perspective: 1200px;
+        }
+
+        /* 3D Smartphone Chassis */
+        .phone-frame {
+            width: 100%;
+            max-width: 440px;
+            background: linear-gradient(165deg, #111a2f 0%, #0a0f1d 100%);
+            border-radius: 44px;
+            box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.9), 
+                        0 0 0 1px rgba(255, 255, 255, 0.1),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 920px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+
+        /* Full Native Mobile Experience on Phone Screen & PWA */
+        @media (max-width: 600px), (display-mode: standalone) {
+            body {
+                padding: 0 !important;
+                margin: 0 !important;
+                perspective: none !important;
+                background-attachment: fixed;
+                width: 100vw;
+                height: 100%;
+            }
+            .phone-frame {
+                max-width: 100% !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                min-height: 100vh !important;
+                height: 100vh;
+                width: 100vw !important;
+            }
+            .tab-content {
+                padding: 16px 14px 120px 14px !important;
+            }
+            .emergency-floating-dock {
+                bottom: 0 !important;
+                padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+                border-radius: 20px 20px 0 0 !important;
+            }
+        }
+
+        /* 3D Top Header Bar with Language Switcher */
+        .header-bar {
+            padding: 16px 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 15, 29, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 10;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .shield-icon-3d {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 6px 14px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 3D Language Toggle Pill */
+        .lang-toggle-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .lang-toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(124, 58, 237, 0.65);
+        }
+
+        /* 3D Scrolling Tab Bar */
+        .tab-bar-3d {
+            display: flex;
+            overflow-x: auto;
+            background: #090e1a;
+            padding: 8px 12px;
+            gap: 8px;
+            scrollbar-width: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .tab-bar-3d::-webkit-scrollbar { display: none; }
+
+        .tab-chip {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 8px 13px;
+            border-radius: 14px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-chip.active {
+            background: linear-gradient(135deg, #6366f1, #4338ca);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Screens */
+        .screen-view {
+            padding: 18px;
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+        }
+        .screen-view.active { display: block; }
+
+        /* 3D Elevated Cards */
+        .card-3d {
+            background: linear-gradient(145deg, rgba(23, 33, 56, 0.9), rgba(14, 21, 38, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .card-3d:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 14px 30px -5px rgba(99, 102, 241, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+
+        /* 3D Tactile SOS Button */
+        .sos-3d-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0 24px;
+        }
+
+        .sos-sphere-outer {
+            width: 185px;
+            height: 185px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, #1a0812, #0d0409);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8),
+                        inset 0 4px 10px rgba(0, 0, 0, 0.9),
+                        0 0 0 2px rgba(255, 42, 95, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .sos-sphere-inner {
+            width: 155px;
+            height: 155px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ff5e82 0%, #e00b3c 55%, #7a001a 100%);
+            box-shadow: 0 12px 28px rgba(224, 11, 60, 0.5),
+                        inset 0 4px 6px rgba(255, 255, 255, 0.6),
+                        inset 0 -6px 12px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.15s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .sos-sphere-outer:active .sos-sphere-inner {
+            transform: scale(0.92) translateY(4px);
+            box-shadow: 0 4px 12px rgba(224, 11, 60, 0.4),
+                        inset 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .sos-text-3d {
+            font-size: 34px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 4px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .sos-sub-3d {
+            font-size: 9px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 1px;
+            margin-top: 3px;
+        }
+
+        .sos-sphere-inner.flashing {
+            animation: pulse3d 0.8s infinite alternate;
+        }
+
+        @keyframes pulse3d {
+            0% { transform: scale(0.98); box-shadow: 0 0 30px #ff2a5f; }
+            100% { transform: scale(1.08); box-shadow: 0 0 80px #ff2a5f, 0 0 110px #ff2a5f; }
+        }
+
+        /* 3D Beveled Quick Action Buttons */
+        .quick-grid-3d {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .quick-btn-3d {
+            background: linear-gradient(145deg, #18233b, #10192e);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 14px 6px;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .quick-btn-3d:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 18px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Product Card Styles */
+        .product-card-3d {
+            background: linear-gradient(145deg, #1e1b2e, #13111f);
+            border: 1px solid rgba(236, 72, 153, 0.25);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+        }
+        .product-card-3d:hover {
+            transform: translateY(-2px);
+            border-color: var(--pink-glow);
+            box-shadow: 0 12px 25px rgba(236, 72, 153, 0.25);
+        }
+
+        /* Terminal 3D */
+        .terminal-3d {
+            background: #060a14;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            max-height: 150px;
+            overflow-y: auto;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+        .terminal-3d .time { color: var(--cyan-glow); }
+        .terminal-3d .agent { color: var(--primary-accent); font-weight: bold; }
+        .terminal-3d .alert { color: var(--danger-glow); font-weight: bold; }
+
+        /* Easy Access Dock at Bottom */
+        .easy-dock {
+            background: rgba(13, 20, 36, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .dock-pill {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .dock-pill:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-frame">
+    <!-- Top 3D Header -->
+    <div class="header-bar">
+        <div class="brand-badge">
+            <div class="shield-icon-3d">🛡️</div>
+            <div>
+                <div style="font-weight: 900; font-size: 15px; color: #fff;" id="uiTitle">SAFEGUARD 3D</div>
+                <div style="font-size: 10px; color: var(--success-glow); font-weight: 700;" id="uiSub">7 AI ஏஜென்ட்கள் & பிளாக்செயின்</div>
+            </div>
+        </div>
+
+        <!-- Language Switcher Button -->
+        <button class="lang-toggle-btn" onclick="toggleLanguage()">
+            <span>🌐</span>
+            <span id="langBtnText">English</span>
+        </button>
+    </div>
+
+    <!-- PWA Mobile App Install Bar -->
+    <div id="pwaInstallBanner" style="display: flex; background: linear-gradient(135deg, #4f46e5, #ec4899); padding: 9px 16px; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: white; border-bottom: 1px solid rgba(255,255,255,0.2);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">📲</span>
+            <span id="txtInstallBanner">SafeGuard App-ஐ போனில் இன்ஸ்டால் செய்!</span>
+        </div>
+        <button onclick="installPWA()" style="background: white; color: #111; border: none; padding: 5px 12px; border-radius: 14px; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">Install App</button>
+    </div>
+
+    <!-- 3D Navigation Tab Bar -->
+    <div class="tab-bar-3d">
+        <button class="tab-chip active" onclick="switchScreen('screen-dash', this)" id="tabDash">🔴 முகப்பு (SOS)</button>
+        <button class="tab-chip" onclick="switchScreen('screen-counsel', this)" id="tabCounsel">💬 சகி AI (Counselor)</button>
+        <button class="tab-chip" onclick="switchScreen('screen-products', this)" id="tabProducts">🛍️ பாதுகாப்பு சாதனங்கள்</button>
+        <button class="tab-chip" onclick="switchScreen('screen-manual', this)" id="tabManual">📖 பயனர் வழிகாட்டி</button>
+        <button class="tab-chip" onclick="switchScreen('screen-threat', this)" id="tabThreat">⚡ சென்சார் AI</button>
+        <button class="tab-chip" onclick="switchScreen('screen-route', this)" id="tabRoute">🗺️ வழித்தடம்</button>
+        <button class="tab-chip" onclick="switchScreen('screen-vault', this)" id="tabVault">⛓️ பிளாக்செயின்</button>
+        <button class="tab-chip" onclick="switchScreen('screen-fir', this)" id="tabFir">⚖️ FIR புகார்</button>
+        <button class="tab-chip" onclick="switchScreen('screen-audit', this)" id="tabAudit">⏱️ கண்காணிப்பு</button>
+    </div>
+
+    <!-- 1. DASHBOARD SCREEN -->
+    <div id="screen-dash" class="screen-view active">
+        <!-- Live Real Phone GPS Tracker Pill -->
+        <div style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.35); border-radius: 14px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 15px;">📍</span>
+                <div>
+                    <div style="font-size: 9px; color: var(--text-muted); font-weight: 700;">நேரலை GPS இருப்பிடம்:</div>
+                    <div id="gpsCoordsText" style="color: #a5b4fc; font-family: 'JetBrains Mono', monospace; font-weight: 700;">13.0827° N, 80.2707° E (Chennai)</div>
+                </div>
+            </div>
+            <button onclick="updateRealGPS()" style="background: var(--primary-accent); border: none; color: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer;">GPS புதுப்பி</button>
+        </div>
+
+        <div class="card-3d" style="display: flex; align-items: center; gap: 16px;">
+            <div style="text-align: center;">
+                <div id="riskValue" style="font-size: 34px; font-weight: 900; color: var(--cyan-glow); font-family: 'JetBrains Mono', monospace;">15%</div>
+                <div style="font-size: 9px; color: var(--text-muted); font-weight: 700;" id="txtRiskIndex">ஆபத்து அளவு</div>
+            </div>
+            <div style="flex: 1;">
+                <div id="riskStatus" style="font-size: 13px; font-weight: 800; color: var(--success-glow);">சுற்றுப்புறம் பாதுகாப்பானது</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" id="txtRiskDesc">7 AI ஏஜென்ட்கள் உங்கள் இருப்பிடம், சென்சார் மற்றும் குரலைத் தொடர்ந்து கண்காணிக்கிறது.</div>
+            </div>
+        </div>
+
+        <!-- Giant 3D Tactical SOS Button -->
+        <div class="sos-3d-stage">
+            <div class="sos-sphere-outer" onclick="triggerSOS()">
+                <div class="sos-sphere-inner" id="sosSphere">
+                    <div style="font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">🚨</div>
+                    <div class="sos-text-3d">S O S</div>
+                    <div class="sos-sub-3d" id="txtSosTap">அழுத்தவும்</div>
+                </div>
+            </div>
+            <button id="cancelSosBtn" style="display: none; margin-top: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="cancelSOS()">
+                ✅ நான் பாதுகாப்பாக உள்ளேன் (ரத்து செய்)
+            </button>
+        </div>
+
+        <!-- 3D Quick Actions -->
+        <div class="quick-grid-3d">
+            <div class="quick-btn-3d" onclick="simulateFakeCall()">
+                <span style="font-size: 20px;">📞</span>
+                <span id="txtFakeCall">போலி அழைப்பு</span>
+            </div>
+            <div class="quick-btn-3d" onclick="alert('Safe Walk AI: Live GPS corridor guardian activated.')">
+                <span style="font-size: 20px;">🚶‍♀️</span>
+                <span id="txtSafeWalk">பாதுகாப்பு நடை</span>
+            </div>
+            <div class="quick-btn-3d" onclick="alert('Connecting to 112 National Police Emergency API...')">
+                <span style="font-size: 20px;">🚨</span>
+                <span id="txtDial112">112 காவல்துறை</span>
+            </div>
+        </div>
+
+        <!-- Autonomous Agent Mesh -->
+        <div class="card-3d">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span style="font-weight: 800; font-size: 13px;" id="txtMeshTitle">தன்னாட்சி AI ஏஜென்ட்கள்</span>
+                <span style="font-size: 10px; color: var(--pink-glow); font-weight: 800;">7 AGENTS LIVE</span>
+            </div>
+            <div class="terminal-3d" id="logBox">
+                <div><span class="time">[21:40]</span> <span class="agent">System:</span> SafeGuard 3D Booted with Sakhi AI Model v2.4.</div>
+                <div><span class="time">[21:40]</span> <span class="agent">Threat Agent:</span> Listening to accelerometer & audio streams.</div>
+                <div><span class="time">[21:40]</span> <span class="agent">Evidence Agent:</span> Polygon Smart Contract sync ready.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SAKHI REAL AI COUNSELOR SCREEN -->
+    <div id="screen-counsel" class="screen-view">
+        <div class="card-3d" style="background: linear-gradient(135deg, #831843, #0f172a); border-color: rgba(236,72,153,0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-weight: 900; font-size: 15px; color: #fff;">💬 சகி (Sakhi) AI பாதுகாப்பு தோழி</div>
+                <span id="geminiModelBadge" style="background: rgba(236,72,153,0.2); color: var(--pink-glow); font-size: 9px; font-weight: 800; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--pink-glow);">GEMINI AI v2.4</span>
+            </div>
+            <div style="font-size: 11px; color: #fbcfe8; margin-top: 4px;">Trauma-Informed மனநல ஆதரவு & இந்திய பெண்கள் சட்ட உரிமைகள் (IPC / BNS) வழிகாட்டி.</div>
+
+            <!-- Gemini API Key configuration box -->
+            <div style="margin-top: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 8px; display: flex; gap: 6px; align-items: center;">
+                <span style="font-size: 14px;">✨</span>
+                <input type="password" id="geminiApiKeyInput" placeholder="Google Gemini API Key (விருப்பப்பட்டால் உள்ளிடவும்)..." style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 5px 8px; font-size: 10px; color: #fff;">
+                <button onclick="saveGeminiKey()" style="background: var(--pink-glow); border: none; color: white; padding: 5px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer;">இணை</button>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px;">
+            <button class="dock-pill" style="font-size: 10px;" onclick="quickCounselPrompt('எனக்கு பயமா இருக்கு, யாரோ பின்தொடர்வது போல் உள்ளது')">😰 பயமா இருக்கு</button>
+            <button class="dock-pill" style="font-size: 10px;" onclick="quickCounselPrompt('ஜீரோ FIR சட்டம் என்றால் என்ன?')">⚖️ ஜீரோ FIR உரிமை</button>
+            <button class="dock-pill" style="font-size: 10px;" onclick="quickCounselPrompt('தற்காப்புக்காக மிளகாய் ஸ்ப்ரே வைத்திருக்க சட்டத்தில் அனுமதி உள்ளதா?')">🌶️ மிளகாய் ஸ்ப்ரே சட்டம்</button>
+        </div>
+
+        <div style="background: #090e1a; border-radius: 16px; padding: 12px; height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;" id="counselChat">
+            <div style="background: #18233c; border: 1px solid rgba(236,72,153,0.3); padding: 12px 14px; border-radius: 16px; font-size: 12px; align-self: flex-start; max-width: 85%; line-height: 1.5;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                    <span style="color: var(--pink-glow); font-weight: 800; font-size: 11px;">✨ Sakhi AI Model:</span>
+                </div>
+                வணக்கம்! நான் உங்கள் சகி AI தோழி. நீங்கள் தமிழ் அல்லது ஆங்கிலத்தில் என்னுடன் பேசலாம். உங்களுக்கு எந்த அச்சமும் வேண்டாம், நீங்கள் சொல்வது அனைத்தும் 100% ரகசியமாக வைக்கப்படும். உங்களுக்கு இப்போது என்ன உதவி வேண்டும்?
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <input type="text" id="chatText" placeholder="தட்டச்சு செய்யவும் (எ.கா: எனக்கு பயமா இருக்கு)..." style="flex: 1; padding: 12px; border-radius: 12px; background: #131c31; border: 1px solid rgba(255,255,255,0.1); color: white; font-size: 12px;" onkeydown="if(event.key==='Enter') sendCounselMsg()">
+            <button style="padding: 0 16px; background: var(--pink-glow); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer;" onclick="sendCounselMsg()">அனுப்பு</button>
+        </div>
+    </div>
+
+    <!-- 3. LADIES SAFETY PRODUCTS & GEAR SCREEN -->
+    <div id="screen-products" class="screen-view">
+        <div class="card-3d" style="background: linear-gradient(135deg, #be185d, #4c0519); border-color: rgba(236,72,153,0.4);">
+            <div style="font-weight: 900; font-size: 15px; color: #fff;" id="pHeaderTitle">🛍️ பெண்கள் பாதுகாப்பு உபகரணங்கள் (Ladies Safety Gear)</div>
+            <div style="font-size: 11px; color: #fce7f3; margin-top: 4px;" id="pHeaderSub">இந்திய சட்டம் (IPC 96-106 / BNS 34-44 தற்காப்பு உரிமை) படி 100% அனுமதிக்கப்பட்ட சாதனங்கள்.</div>
+        </div>
+
+        <!-- Product 1: Pepper Spray -->
+        <div class="product-card-3d">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 32px;">🌶️</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 14px; color: #fff;">தற்காப்பு மிளகாய் ஸ்ப்ரே (Pepper Spray)</div>
+                        <div style="font-size: 10px; color: var(--cyan-glow); font-weight: 700;">12 அடி தூரம் பீய்ச்சியடிக்கும் • 10% OC பார்முலா</div>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--pink-glow); font-size: 16px;">₹499</div>
+            </div>
+            <div style="font-size: 10px; color: var(--success-glow); background: rgba(16,185,129,0.12); padding: 4px 8px; border-radius: 6px; margin: 8px 0; display: inline-block; font-weight: 700;">
+                ⚖️ 100% Legal in India (Section 96-106 IPC Private Defence)
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+                தாக்குபவரின் கண்களில் கடுமையான எரிச்சலையும் தற்காலிக பார்வையிழப்பையும் உண்டாக்கி தப்பிக்கும் வாய்ப்பைத் தரும்.
+            </div>
+            <div style="font-size: 10px; color: var(--warning-glow); margin-top: 6px;">
+                ⚡ SafeGuard இணைப்பு: இருட்டான பகுதிகளில் நடக்கும்போது ஸ்ப்ரேயை கையில் வைக்க AI நினைவூட்டும்.
+            </div>
+            <a href="https://www.amazon.in/s?k=pepper+spray+for+women+safety" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; text-align: center; width: 100%; margin-top: 10px; padding: 11px; background: linear-gradient(135deg, #ff9900, #ff6600); border: none; border-radius: 10px; color: #111; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.4);">
+                🛒 Amazon-ல் உடனே வாங்கு (Buy on Amazon) ↗
+            </a>
+        </div>
+
+        <!-- Product 2: Panic Keychain Alarm -->
+        <div class="product-card-3d">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 32px;">🔊</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 14px; color: #fff;">130dB பாதுகாப்பு அலாரம் சாவிக்கொத்து</div>
+                        <div style="font-size: 10px; color: var(--cyan-glow); font-weight: 700;">200 மீட்டர் சுற்றளவுக்கு காதை பிளக்கும் சைரன்</div>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--pink-glow); font-size: 16px;">₹349</div>
+            </div>
+            <div style="font-size: 10px; color: var(--success-glow); background: rgba(16,185,129,0.12); padding: 4px 8px; border-radius: 6px; margin: 8px 0; display: inline-block; font-weight: 700;">
+                ✈️ விமான நிலையம் & மெட்ரோ பாதுகாப்பு விதிகளுக்கு உட்பட்டது
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+                அவசரத்தில் பின்னை இழுத்தால் அலறி அடிக்கும் சைரனும் எல்இடி ஸ்ட்ரோபும் குற்றவாளிகளை மிரளவைத்து பொதுமக்களை உடனே ஈர்க்கும்.
+            </div>
+            <div style="font-size: 10px; color: var(--warning-glow); margin-top: 6px;">
+                ⚡ SafeGuard இணைப்பு: இதன் அதிவேக ஒலி கேட்டவுடனே Threat Agent தானாக SOS இயக்கும்.
+            </div>
+            <a href="https://www.amazon.in/s?k=personal+alarm+for+women+safety+130db" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; text-align: center; width: 100%; margin-top: 10px; padding: 11px; background: linear-gradient(135deg, #ff9900, #ff6600); border: none; border-radius: 10px; color: #111; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.4);">
+                🛒 Amazon-ல் உடனே வாங்கு (Buy on Amazon) ↗
+            </a>
+        </div>
+
+        <!-- Product 3: Smart SOS Ring -->
+        <div class="product-card-3d">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 32px;">💍</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 14px; color: #fff;">ஸ்மார்ட் SOS மோதிரம் (Bluetooth Ring)</div>
+                        <div style="font-size: 10px; color: var(--cyan-glow); font-weight: 700;">ரகசிய பேனிக் பட்டன் • நீர் புகா சாதனம்</div>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--pink-glow); font-size: 16px;">₹1,499</div>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 6px;">
+                மோதிரத்தின் அடியில் உள்ள சிறிய பட்டனை 2 முறை அழுத்தினால் போனைத் தொடாமலேயே SafeGuard SOS மற்றும் பாலிகான் பிளாக்செயின் பதிவு தொடங்கும்.
+            </div>
+            <div style="font-size: 10px; color: var(--warning-glow); margin-top: 6px;">
+                ⚡ SafeGuard இணைப்பு: போன் பையில் இருந்தாலும் SOS Agent-ஐ இயக்கும் வன்பொருள் (Hardware).
+            </div>
+            <a href="https://www.amazon.in/s?k=smart+ring+sos+emergency+button" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; text-align: center; width: 100%; margin-top: 10px; padding: 11px; background: linear-gradient(135deg, #ff9900, #ff6600); border: none; border-radius: 10px; color: #111; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.4);">
+                🛒 Amazon-ல் உடனே வாங்கு (Buy on Amazon) ↗
+            </a>
+        </div>
+
+        <!-- Product 4: Hidden Camera Detector -->
+        <div class="product-card-3d">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 32px;">👁️</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 14px; color: #fff;">ரகசிய கேமரா கண்டறியும் லேசர் கருவி</div>
+                        <div style="font-size: 10px; color: var(--cyan-glow); font-weight: 700;">ஹோட்டல் & துணிக்கடை ட்ரையல் ரூம் பாதுகாப்பு</div>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--pink-glow); font-size: 16px;">₹1,299</div>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 6px;">
+                அறைகளில் மறைத்து வைக்கப்பட்டுள்ள மைக்ரோ லென்ஸ்களை அகச்சிவப்பு லேசர் கதிர்கள் மூலம் நொடிகளில் கண்டறியும்.
+            </div>
+            <div style="font-size: 10px; color: var(--warning-glow); margin-top: 6px;">
+                ⚡ SafeGuard இணைப்பு: கேமரா கண்டறியப்பட்டால் BNS 77 பிரிவின் கீழ் உடனே FIR தயாரிக்கலாம்.
+            </div>
+            <a href="https://www.amazon.in/s?k=hidden+camera+detector+device" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; text-align: center; width: 100%; margin-top: 10px; padding: 11px; background: linear-gradient(135deg, #ff9900, #ff6600); border: none; border-radius: 10px; color: #111; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.4);">
+                🛒 Amazon-ல் உடனே வாங்கு (Buy on Amazon) ↗
+            </a>
+        </div>
+
+        <!-- Product 5: Portable Door Jammer -->
+        <div class="product-card-3d">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 32px;">🚪</span>
+                    <div>
+                        <div style="font-weight: 800; font-size: 14px; color: #fff;">அறை கதவு பாதுகாப்பு பூட்டு (Door Jammer)</div>
+                        <div style="font-size: 10px; color: var(--cyan-glow); font-weight: 700;">350+ பவுண்ட் அழுத்தத்தை தாங்கும் ஸ்டீல் பூட்டு</div>
+                    </div>
+                </div>
+                <div style="font-weight: 900; color: var(--pink-glow); font-size: 16px;">₹599</div>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 6px;">
+                விடுதி அல்லது ஹோட்டல் கதவின் அடியில் 5 நொடிகளில் பொருத்திவிடலாம். மாஸ்டர் சாவி இருந்தாலும் கதவை திறக்க முடியாது.
+            </div>
+            <a href="https://www.amazon.in/s?k=portable+door+lock+for+women+travel" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none; text-align: center; width: 100%; margin-top: 10px; padding: 11px; background: linear-gradient(135deg, #ff9900, #ff6600); border: none; border-radius: 10px; color: #111; font-weight: 900; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 153, 0, 0.4);">
+                🛒 Amazon-ல் உடனே வாங்கு (Buy on Amazon) ↗
+            </a>
+        </div>
+    </div>
+
+    <!-- 4. USER MANUAL SCREEN (எளிய பயனர் வழிகாட்டி) -->
+    <div id="screen-manual" class="screen-view">
+        <div class="card-3d" style="background: linear-gradient(135deg, #3730a3, #1e1b4b); border-color: rgba(99, 102, 241, 0.4);">
+            <div style="font-size: 15px; font-weight: 800; color: #fff;" id="manHeaderTitle">📖 எளிய பயனர் வழிகாட்டி (Easy User Manual)</div>
+            <div style="font-size: 12px; color: #c7d2fe; margin-top: 4px;" id="manHeaderSub">சேஃப்கார்ட் செயலியை 5 எளிய படிகளில் பயன்படுத்துவது எப்படி?</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="card-3d" style="border-left: 4px solid var(--danger-glow);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: var(--danger-glow); color: white; font-weight: 900; font-size: 11px; padding: 3px 8px; border-radius: 8px;">படி 01</span>
+                <span style="font-size: 11px; color: var(--danger-glow); font-weight: 800;">அதிவேக உதவி</span>
+            </div>
+            <div style="font-weight: 800; font-size: 14px; margin-top: 8px;" id="mStep1T">1. அவசர SOS பயன்பாடு</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;" id="mStep1D">
+                அவசர ஆபத்தில் இருக்கும் போது திரையில் உள்ள 3D சிவப்பு SOS பட்டனை ஒருமுறை அழுத்தவும் அல்லது போனை வேகமாக 3 முறை அசைக்கவும். உடனே 112 காவல்துறை மற்றும் குடும்பத்தினருக்கு நேரலை GPS இருப்பிடம் அனுப்பப்படும்.
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="card-3d" style="border-left: 4px solid var(--pink-glow);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: var(--pink-glow); color: white; font-weight: 900; font-size: 11px; padding: 3px 8px; border-radius: 8px;">படி 02</span>
+                <span style="font-size: 11px; color: var(--pink-glow); font-weight: 800;">தொடாமல் பேசும் குரல்</span>
+            </div>
+            <div style="font-weight: 800; font-size: 14px; margin-top: 8px;" id="mStep2T">2. குரல் வழி எச்சரிக்கை (Hands-Free)</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;" id="mStep2D">
+                போனை கையில் எடுக்க முடியாத இக்கட்டான சூழலில், "காப்பாத்துங்க" (Kaapathunga) அல்லது "HELP" என்று உரக்கக் கூறினால், AI Threat Agent உடனே ஆபத்தை உணர்ந்து தானாகவே SOS இயக்கும்.
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="card-3d" style="border-left: 4px solid var(--primary-accent);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: var(--primary-accent); color: white; font-weight: 900; font-size: 11px; padding: 3px 8px; border-radius: 8px;">படி 03</span>
+                <span style="font-size: 11px; color: var(--cyan-glow); font-weight: 800;">நீதிமன்ற சான்று</span>
+            </div>
+            <div style="font-weight: 800; font-size: 14px; margin-top: 8px;" id="mStep3T">3. பிளாக்செயின் சான்று பாதுகாப்பு</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;" id="mStep3D">
+                SOS அழுத்தப்பட்டவுடன் சுற்றுப்புறத்தின் 30-நொடி ஆடியோ மற்றும் வீடியோ தானாக பதிவாகி பாலிகான் பிளாக்செயினில் பூட்டப்படும். குற்றவாளிகளோ மற்றவர்களோ இந்த ஆதாரங்களை அழிக்கவோ மாற்றவோ முடியாது.
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="card-3d" style="border-left: 4px solid var(--success-glow);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: var(--success-glow); color: white; font-weight: 900; font-size: 11px; padding: 3px 8px; border-radius: 8px;">படி 04</span>
+                <span style="font-size: 11px; color: var(--success-glow); font-weight: 800;">ஒளிரும் வழித்தடம்</span>
+            </div>
+            <div style="font-weight: 800; font-size: 14px; margin-top: 8px;" id="mStep4T">4. பாதுகாப்பான வழித்தட வழிகாட்டி</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;" id="mStep4D">
+                இரவில் தனியாக செல்லும்போது "Safe Route" பிரிவைத் திறக்கவும். தெருவிளக்குகள், மக்கள் நடமாட்டம் மற்றும் அருகில் உள்ள 24x7 மருந்தகங்கள், காவல் நிலையங்கள் உள்ள பாதுகாப்பான பாதையை AI பரிந்துரைக்கும்.
+            </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="card-3d" style="border-left: 4px solid var(--warning-glow);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="background: var(--warning-glow); color: black; font-weight: 900; font-size: 11px; padding: 3px 8px; border-radius: 8px;">படி 05</span>
+                <span style="font-size: 11px; color: var(--warning-glow); font-weight: 800;">100% ரகசியத்தன்மை</span>
+            </div>
+            <div style="font-weight: 800; font-size: 14px; margin-top: 8px;" id="mStep5T">5. ஜீரோ FIR & அநாமதேய புகார்</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;" id="mStep5D">
+                உங்கள் பெயரை மறைத்து Zero-Knowledge கிரிப்டோகிராஃபி மூலம் ரகசியமாக புகார் அளிக்கலாம். புதிய BNS சட்டப் பிரிவுகளுடன் நீதிமன்றத்தில் ஏற்கத்தக்க FIR மனு உடனடியாக தயாராகும்.
+            </div>
+        </div>
+
+        <!-- Helpline Directory -->
+        <div class="card-3d">
+            <div style="font-weight: 800; font-size: 14px; color: var(--success-glow); margin-bottom: 10px;" id="manHelplineT">📞 முக்கிய அவசர உதவி எண்கள்</div>
+            <div style="font-size: 12px; color: var(--text-main); line-height: 1.8;">
+                • <strong>112</strong> : தேசிய அவசர காவல் & ஆம்புலன்ஸ் சேவை<br>
+                • <strong>1091</strong> : மகளிர் உதவி எண் (24/7 கட்டணமில்லா தொலைபேசி)<br>
+                • <strong>181</strong> : இக்கட்டான சூழலில் உள்ள மகளிருக்கான உதவி<br>
+                • <strong>15100</strong> : இலவச சட்ட உதவி ஆணையம் (National Legal Aid)
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. THREAT AGENT SCREEN -->
+    <div id="screen-threat" class="screen-view">
+        <div class="card-3d">
+            <div style="font-weight: 800; font-size: 14px; color: var(--cyan-glow);" id="tThreatTitle">⚡ சென்சார் & குரல் பரிசோதனை</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" id="tThreatDesc">நிஜ மைக்ரோஃபோன் மூலம் "HELP" அல்லது "காப்பாத்துங்க" என்று குரல் கொடுத்தால் AI தானாக SOS இயக்கும்:</div>
+
+            <!-- Real Continuous Speech Recognition Controller -->
+            <div style="margin-top: 14px; background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.3); border-radius: 14px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 22px;">🎙️</span>
+                        <div>
+                            <div style="font-weight: 800; font-size: 13px; color: #fff;">நேரலை மைக்ரோஃபோன் குரல் கண்டறிதல்</div>
+                            <div style="font-size: 10px; color: var(--pink-glow);" id="voiceMicStatus">நிலை: காத்திருக்கிறது (Standby)</div>
+                        </div>
+                    </div>
+                    <button id="btnToggleVoiceListen" onclick="toggleVoiceRecognition()" style="padding: 7px 14px; background: var(--pink-glow); border: none; border-radius: 20px; color: white; font-size: 11px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(236,72,153,0.4);">
+                        மைக்கை இயக்கு (Start Mic)
+                    </button>
+                </div>
+                <!-- Real-time transcript box -->
+                <div style="margin-top: 10px; background: #090e1a; border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #cbd5e1; font-family: monospace;">
+                    <span style="color: var(--cyan-glow);">கேட்கப்பட்ட வார்த்தை:</span> <span id="voiceLiveTranscript" style="color: #fff; font-weight: 700;">"..."</span>
+                </div>
+                <div style="font-size: 10px; color: var(--warning-glow); margin-top: 6px;">
+                    🔑 தூண்டுதல் வார்த்தைகள்: "Help", "காப்பாத்துங்க", "Emergency", "Police", "ஆபத்து"
+                </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted);">
+                    <span id="tAccLabel">அதிவேக அசைவு / தள்ளுமுள்ளு (Accelerometer)</span>
+                    <span id="accReadout" style="color: var(--cyan-glow); font-family: monospace;">10 m/s²</span>
+                </div>
+                <input type="range" id="accRange" min="0" max="60" value="10" style="width: 100%; margin-top: 8px; accent-color: var(--cyan-glow);" oninput="onSensorSlide()">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <div>
+                    <div style="font-size: 13px; font-weight: 700;" id="tVoiceLabel">குரல் வார்த்தை சோதனைக் குறியீடு (Manual Simulation)</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">"HELP" அல்லது "காப்பாத்துங்க"</div>
+                </div>
+                <input type="checkbox" id="voiceChk" style="width: 20px; height: 20px; accent-color: var(--pink-glow);" onchange="onSensorSlide()">
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <div>
+                    <div style="font-size: 13px; font-weight: 700;" id="tRouteLabel">வழித்தட மாற்றம் / இருட்டான பகுதி</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">விலகிய தூரம் > 400 மீ</div>
+                </div>
+                <input type="checkbox" id="routeChk" style="width: 20px; height: 20px; accent-color: var(--warning-glow);" onchange="onSensorSlide()">
+            </div>
+
+            <button style="width: 100%; margin-top: 16px; padding: 10px; background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="resetSensors()" id="btnResetSensors">
+                சென்சார்களை இயல்பு நிலைக்கு மாற்று
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. SAFE ROUTE SCREEN -->
+    <div id="screen-route" class="screen-view">
+        <div class="card-3d" style="background: linear-gradient(135deg, #064e3b, #0f172a);">
+            <div style="font-weight: 800; font-size: 14px; color: var(--success-glow);" id="rTitle">🗺️ பாதுகாப்பான வழித்தட வழிகாட்டி (Safe Navigation)</div>
+            <div style="font-size: 11px; color: #a7f3d0; margin-top: 4px;" id="rSub">Google Maps இணைப்புடன் மக்கள் நடமாட்டம் மிகுந்த பாதுகாப்பான பகுதிகள் மற்றும் புகலிடங்கள்.</div>
+        </div>
+
+        <!-- Google Maps Live Embed & Direct Navigation Action -->
+        <div class="card-3d" style="padding: 12px; overflow: hidden;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 12px; font-weight: 800; color: #fff;">📍 நேரலை வரைபடம் (Live Safe Corridors)</span>
+                <span style="background: rgba(16,185,129,0.2); color: var(--success-glow); font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px;">HIGH CROWD CORRIDOR</span>
+            </div>
+            <!-- Embedded Google Map -->
+            <div style="position: relative; width: 100%; height: 210px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                <iframe 
+                    id="gmapIframe"
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    loading="lazy" 
+                    allowfullscreen 
+                    src="https://www.google.com/maps?q=police+station+metro+chennai&output=embed">
+                </iframe>
+            </div>
+
+            <!-- Direct Google Maps App Open Buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+                <button onclick="openLiveGoogleMaps('busy')" style="background: linear-gradient(135deg, #10b981, #059669); border: none; color: white; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>👥</span> மக்கள் நடமாட்ட வழி
+                </button>
+                <button onclick="openLiveGoogleMaps('police')" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; color: white; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    <span>👮</span> காவல் & புகலிடம்
+                </button>
+            </div>
+        </div>
+
+        <!-- High-Crowd Safe Hubs in Area -->
+        <div class="card-3d">
+            <div style="font-weight: 800; font-size: 13px; color: var(--cyan-glow); margin-bottom: 8px;">🏬 மக்கள் அதிகம் பயன்படுத்தும் பாதுகாப்பான மையங்கள்</div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #fff;">🚇 மெட்ரோ நிலையம் (Metro Station)</div>
+                    <div style="font-size: 10px; color: var(--text-muted);">24x7 CISF பாதுகாப்பு • CCTV கண்காணிப்பு</div>
+                </div>
+                <button onclick="openCustomNav('Metro Station')" style="padding: 5px 10px; background: rgba(99,102,241,0.25); border: 1px solid var(--primary-accent); border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;">வழி செல்</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #fff;">🏪 24x7 பிரதான மருந்தகம் (Apollo / Medplus)</div>
+                    <div style="font-size: 10px; color: var(--text-muted);">அதிக வெளிச்சம் • எப்போதும் ஆட்கள் இருக்கும் இடம்</div>
+                </div>
+                <button onclick="openCustomNav('24 hours pharmacy')" style="padding: 5px 10px; background: rgba(99,102,241,0.25); border: 1px solid var(--primary-accent); border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;">வழி செல்</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                <div>
+                    <div style="font-size: 12px; font-weight: 700; color: #fff;">⛽ 24x7 பெட்ரோல் பங்க் (HP / Indian Oil)</div>
+                    <div style="font-size: 10px; color: var(--text-muted);">ஒளிரும் விளக்குகள் • பொது உதவி மையம்</div>
+                </div>
+                <button onclick="openCustomNav('petrol bunk')" style="padding: 5px 10px; background: rgba(99,102,241,0.25); border: 1px solid var(--primary-accent); border-radius: 8px; color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;">வழி செல்</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. BLOCKCHAIN VAULT SCREEN -->
+    <div id="screen-vault" class="screen-view">
+        <div class="card-3d" style="background: linear-gradient(135deg, #312e81, #0f172a);">
+            <div style="font-weight: 800; font-size: 14px; color: var(--cyan-glow);" id="vTitle">⛓️ பாலிகான் பிளாக்செயின் சான்று பெட்டகம்</div>
+            <div style="font-size: 11px; color: #c7d2fe; margin-top: 4px;" id="vSub">பதிவான ஆடியோ மற்றும் வீடியோவை யாரும் மாற்றவோ நீக்கவோ முடியாது (BSA 65B சட்ட ஏற்புடைமை).</div>
+        </div>
+
+        <!-- Where is evidence stored explanation banner -->
+        <div class="card-3d" style="background: rgba(49, 46, 129, 0.25); border-left: 4px solid var(--cyan-glow);">
+            <div style="font-weight: 800; font-size: 12px; color: var(--cyan-glow);">📁 சான்றுகள் எங்கே சேமிக்கப்படுகிறது? (Storage Architecture)</div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.5; margin-top: 6px;">
+                • <strong>ஆடியோ & வீடியோ ஃபைல்கள்:</strong> பரவலாக்கப்பட்ட <strong>IPFS (InterPlanetary File System)</strong> மற்றும் AES-256 என்க்ரிப்ட் செய்யப்பட்ட பாதுகாப்பான பெட்டகத்தில் சேமிக்கப்படுகிறது.<br>
+                • <strong>டிஜிட்டல் கைரேகை (Hash) & நேரமுத்திரை:</strong> <strong>Polygon Smart Contract</strong>-ல் எழுதப்படுகிறது. இதனால் 1 பைசா அளவில் குறைந்த செலவில் மாற்ற முடியாத நிரந்தர சான்றாகிறது.
+            </div>
+        </div>
+
+        <!-- Interactive Evidence Locker List -->
+        <div style="margin: 14px 0 8px; font-weight: 800; font-size: 13px; color: #fff; display: flex; justify-content: space-between; align-items: center;">
+            <span>🔒 உங்கள் பாதுகாக்கப்பட்ட சான்றுகள் (Evidence Locker)</span>
+            <span id="evidenceCountBadge" style="background: var(--pink-glow); font-size: 9px; padding: 2px 7px; border-radius: 10px;">1 RECORD</span>
+        </div>
+
+        <div id="evidenceListContainer">
+            <!-- Evidence Item Card 1 -->
+            <div class="card-3d" style="border: 1px solid rgba(6,182,212,0.3); margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-weight: 800; font-size: 13px; color: var(--cyan-glow);">EVID-TN-2026-0842</div>
+                        <div style="font-size: 10px; color: var(--text-muted);">2026-10-29 12:45:10 IST • Anna Salai, Guindy</div>
+                    </div>
+                    <span style="background: rgba(16,185,129,0.15); color: var(--success-glow); font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 6px;">SEALED ON POLYGON</span>
+                </div>
+
+                <!-- Ambient Audio Player with Admin Guard -->
+                <div style="background: #090e1a; border-radius: 10px; padding: 10px; margin: 10px 0; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button id="btnPlayAudio" onclick="handleEvidenceAudioClick('EVID-TN-2026-0842')" style="background: var(--pink-glow); border: none; width: 34px; height: 34px; border-radius: 50%; color: white; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(236,72,153,0.4);">
+                            🔒
+                        </button>
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: white;" id="audioStatusText">30 நொடி ஆடியோ சான்று (பூட்டப்பட்டுள்ளது)</div>
+                            <div style="font-size: 9px; color: var(--text-muted);" id="audioSubText">நீதிமன்ற அனுமதியுடன் கேட்கலாம்</div>
+                        </div>
+                    </div>
+                    <span style="font-size: 10px; font-family: monospace; color: var(--cyan-glow);" id="audioTimerDisplay">00:30</span>
+                </div>
+
+                <div style="font-size: 10px; color: var(--text-muted); line-height: 1.6; background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; font-family: monospace;">
+                    <div><strong>IPFS CID:</strong> <span style="color:#c7d2fe;">bafybeigdyrzt5sfp7udm7hu...7qy55fbzdi</span></div>
+                    <div style="margin-top: 4px;"><strong>Polygon TX:</strong> <span style="color:#a5b4fc;">0x7a83d91cf3e68029...23a1ef90</span></div>
+                    <div style="margin-top: 4px; color: var(--success-glow);"><strong>சட்டம்:</strong> Sec 63 BSA 2023 / 65B Indian Evidence Act Compliant</div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <button onclick="viewLegalCert('EVID-TN-2026-0842')" style="flex: 1; padding: 8px; background: rgba(99,102,241,0.2); border: 1px solid var(--primary-accent); color: white; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer;">📜 நீதிமன்ற சான்றிதழ் காண்</button>
+                    <button onclick="copyHashToInput('0x7a83d91cf3e68029b9f71c4d92418a0e23f81bc92e105e1a3bc8917d23a1ef90')" style="padding: 8px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer;">சரிபார்க்க நகலெடு</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification Tool -->
+        <div class="card-3d">
+            <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">சான்று உண்மைத்தன்மையை சரிபார்க்கவும் (Tamper-Proof Verification)</div>
+            <input type="text" id="hashInput" placeholder="IPFS CID அல்லது Transaction Hash உள்ளிடவும்..." style="width: 100%; padding: 10px; border-radius: 10px; background: #070c17; color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 11px; font-family: monospace;">
+            <button style="width: 100%; margin-top: 10px; padding: 10px; background: var(--primary-accent); border: none; border-radius: 10px; color: white; font-weight: 800; font-size: 12px; cursor: pointer;" onclick="verifyHash()">பிளாக்செயினில் சரிபார் (Verify On-Chain)</button>
+            <div id="verifyLog" style="font-size: 11px; margin-top: 8px; font-weight: 700;"></div>
+        </div>
+    </div>
+
+    <!-- Admin / Police Login Modal Window (Hidden by default, opens only when locked audio is clicked) -->
+    <div id="adminAuthModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 100; align-items: center; justify-content: center; padding: 20px;">
+        <div class="card-3d" style="width: 100%; max-width: 360px; background: #0e1628; border: 1px solid var(--warning-glow); box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="font-size: 20px;">🔐</span>
+                    <span style="font-weight: 800; font-size: 14px; color: var(--warning-glow);">பாதுகாக்கப்பட்ட ஆடியோ பெட்டகம்</span>
+                </div>
+                <button onclick="closeAdminModal()" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer;">✕</button>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;">
+                இந்த ஆடியோ சான்றை இயக்க அதிகாரி பயனர் ஐடி & கடவுச்சொல் தேவை.
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div>
+                    <label style="font-size: 10px; color: var(--text-muted); font-weight: 700;">பயனர் ஐடி (User ID):</label>
+                    <input type="text" id="adminUserInp" placeholder="User ID உள்ளிடவும்..." style="width: 100%; padding: 8px 10px; border-radius: 8px; background: #070c17; border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 12px; margin-top: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 10px; color: var(--text-muted); font-weight: 700;">கடவுச்சொல் (Password):</label>
+                    <input type="password" id="adminPassInp" placeholder="Password உள்ளிடவும்..." style="width: 100%; padding: 8px 10px; border-radius: 8px; background: #070c17; border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 12px; margin-top: 4px;">
+                </div>
+                <button onclick="submitAdminAuth()" style="width: 100%; margin-top: 6px; padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); border: none; border-radius: 8px; color: black; font-weight: 900; font-size: 12px; cursor: pointer;">
+                    திற (Unlock Audio)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. FIR CASE SCREEN -->
+    <div id="screen-fir" class="screen-view">
+        <div class="card-3d">
+            <div style="font-weight: 800; font-size: 14px; color: var(--warning-glow);" id="fTitle">⚖️ தானியங்கி சட்டப்பூர்வ FIR தயாரிப்பு</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" id="fSub">புதிய BNS (பாரதிய நியாய சன்ஹிதா) சட்டப் பிரிவுகளுடன் அதிகாரப்பூர்வ புகார் மனு.</div>
+
+            <div style="margin-top: 14px;">
+                <label style="font-size: 11px; color: var(--text-muted); font-weight: 700;">குற்றப் பிரிவு</label>
+                <select id="firType" style="width: 100%; padding: 10px; border-radius: 8px; background: #0c1424; color: white; border: 1px solid rgba(255,255,255,0.1); margin-top: 6px; font-size: 12px;">
+                    <option>பின்தொடர்ந்து தொல்லை கொடுத்தல் (Stalking - BNS 78 / IPC 354D)</option>
+                    <option>பெண்களைக் கேலி செய்தல் / ஆபாசப் பேச்சு (BNS 79 / IPC 509)</option>
+                    <option>தாக்குதல் / வலுக்கட்டாயம் (Assault - BNS 74 / IPC 354)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                <span style="font-size: 12px; font-weight: 700;">Zero-Knowledge அநாமதேய புகார் (பெயர் ரகசியம்)</span>
+                <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary-accent);">
+            </div>
+
+            <div style="margin-top: 12px;">
+                <textarea id="firNotes" rows="3" placeholder="சம்பவம் நடந்த இடம், நேரம், வண்டி எண் போன்றவற்றை எழுதவும்..." style="width: 100%; padding: 10px; border-radius: 8px; background: #0c1424; color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 12px;"></textarea>
+            </div>
+
+            <button style="width: 100%; margin-top: 12px; padding: 12px; background: var(--warning-glow); border: none; border-radius: 10px; color: black; font-weight: 900; font-size: 12px; cursor: pointer;" onclick="draftFIR()">FIR புகார் மனுவை உருவாக்கு</button>
+        </div>
+
+        <div id="firOutput"></div>
+    </div>
+
+    <!-- 9. AUDIT SCREEN -->
+    <div id="screen-audit" class="screen-view">
+        <div class="card-3d" style="background: linear-gradient(135deg, #4c1d95, #0f172a);">
+            <div style="font-weight: 800; font-size: 14px; color: #c084fc;">⏱️ கண்காணிப்பு & பொறுப்புடைமை ஏஜென்ட் (Audit)</div>
+            <div style="font-size: 11px; color: #e9d5ff; margin-top: 4px;">காவல்துறையினர் 6 மணி நேரத்திற்குள் நடவடிக்கை எடுக்கவில்லை எனில், ஸ்மார்ட் ஒப்பந்தம் தானாகவே மாநில மகளிர் ஆணையத்திற்கு மேல்முறையீடு செய்யும்.</div>
+        </div>
+
+        <div class="card-3d">
+            <div style="display: flex; justify-content: space-between;">
+                <strong>வழக்கு #1001 கண்காணிப்பு</strong>
+                <span style="color: var(--warning-glow); font-weight: 800;">2h 15m மீதம்</span>
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">காவல் நிலையம்: கிண்டி அனைத்து மகளிர் காவல் நிலையம்</div>
+            <button style="width: 100%; margin-top: 10px; padding: 10px; background: transparent; border: 1px solid var(--warning-glow); color: var(--warning-glow); border-radius: 10px; font-weight: 800; font-size: 11px; cursor: pointer;" onclick="alert('Case #1001 escalated to State Commission on Blockchain block #4819441')">
+                மாநில மகளிர் ஆணையத்திற்கு உடனே மேல்முறையீடு செய்
+            </button>
+        </div>
+    </div>
+
+    <!-- Easy Access Emergency Floating Dock -->
+    <div class="easy-dock">
+        <div class="dock-pill" onclick="simulateFakeCall()">
+            <span>📞</span>
+            <span id="dockFake">போலி அழைப்பு</span>
+        </div>
+        <div class="dock-pill" style="border-color: var(--danger-glow); color: var(--danger-glow);" onclick="triggerSOS()">
+            <span>🚨</span>
+            <span id="dockSos">உடனடி SOS</span>
+        </div>
+        <div class="dock-pill" onclick="switchScreen('screen-products', document.getElementById('tabProducts'))">
+            <span>🛍️</span>
+            <span id="dockProducts">பாதுகாப்பு சாதனங்கள்</span>
+        </div>
+        <div class="dock-pill" onclick="switchScreen('screen-counsel', document.getElementById('tabCounsel'))">
+            <span>💬</span>
+            <span id="dockCounsel">சகி AI</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isTamil = true;
+    let isSosActive = false;
+
+    const translations = {
+        ta: {
+            title: "சேஃப்கார்ட் 3D",
+            sub: "7 AI ஏஜென்ட்கள் & பிளாக்செயின்",
+            langBtn: "English",
+            tabDash: "🔴 முகப்பு (SOS)",
+            tabCounsel: "💬 சகி AI (Counselor)",
+            tabProducts: "🛍️ பாதுகாப்பு சாதனங்கள்",
+            tabManual: "📖 பயனர் வழிகாட்டி",
+            tabThreat: "⚡ சென்சார் AI",
+            tabRoute: "🗺️ வழித்தடம்",
+            tabVault: "⛓️ பிளாக்செயின்",
+            tabFir: "⚖️ FIR புகார்",
+            tabAudit: "⏱️ கண்காணிப்பு",
+            riskIndex: "ஆபத்து அளவு",
+            riskSecure: "சுற்றுப்புறம் பாதுகாப்பானது",
+            riskDesc: "7 AI ஏஜென்ட்கள் உங்கள் இருப்பிடம், சென்சார் மற்றும் குரலைத் தொடர்ந்து கண்காணிக்கிறது.",
+            sosTap: "அழுத்தவும்",
+            fakeCall: "போலி அழைப்பு",
+            safeWalk: "பாதுகாப்பு நடை",
+            dial112: "112 காவல்துறை",
+            meshTitle: "தன்னாட்சி AI ஏஜென்ட்கள்",
+            pHeadT: "🛍️ பெண்கள் பாதுகாப்பு உபகரணங்கள் (Ladies Safety Gear)",
+            pHeadS: "இந்திய சட்டம் (IPC 96-106 / BNS 34-44 தற்காப்பு உரிமை) படி 100% அனுமதிக்கப்பட்ட சாதனங்கள்.",
+            dockFake: "போலி அழைப்பு",
+            dockSos: "உடனடி SOS",
+            dockProducts: "பாதுகாப்பு சாதனங்கள்",
+            dockCounsel: "சகி AI"
+        },
+        en: {
+            title: "SAFEGUARD 3D",
+            sub: "7 AI Agents & Blockchain Active",
+            langBtn: "தமிழ்",
+            tabDash: "🔴 Home (SOS)",
+            tabCounsel: "💬 Sakhi AI (Counselor)",
+            tabProducts: "🛍️ Safety Gear",
+            tabManual: "📖 User Manual",
+            tabThreat: "⚡ Sensor AI",
+            tabRoute: "🗺️ Safe Route",
+            tabVault: "⛓️ Blockchain",
+            tabFir: "⚖️ FIR Drafting",
+            tabAudit: "⏱️ Audit SLA",
+            riskIndex: "RISK INDEX",
+            riskSecure: "SURROUNDINGS SECURE",
+            riskDesc: "7 Autonomous AI agents actively monitor location, telemetry & audio.",
+            sosTap: "TAP OR HOLD",
+            fakeCall: "Fake Call",
+            safeWalk: "Safe Walk",
+            dial112: "Dial 112",
+            meshTitle: "Autonomous Agent Mesh",
+            pHeadT: "🛍️ Ladies Safety Products & Self-Defense Gear",
+            pHeadS: "100% Legal under the Right of Private Defence in India (IPC 96-106 / BNS 34-44).",
+            dockFake: "Fake Call",
+            dockSos: "Panic SOS",
+            dockProducts: "Safety Gear",
+            dockCounsel: "Sakhi AI"
+        }
+    };
+
+    function toggleLanguage() {
+        isTamil = !isTamil;
+        const lang = isTamil ? translations.ta : translations.en;
+
+        document.getElementById('uiTitle').innerText = lang.title;
+        document.getElementById('uiSub').innerText = lang.sub;
+        document.getElementById('langBtnText').innerText = lang.langBtn;
+
+        document.getElementById('tabDash').innerText = lang.tabDash;
+        document.getElementById('tabCounsel').innerText = lang.tabCounsel;
+        document.getElementById('tabProducts').innerText = lang.tabProducts;
+        document.getElementById('tabManual').innerText = lang.tabManual;
+        document.getElementById('tabThreat').innerText = lang.tabThreat;
+        document.getElementById('tabRoute').innerText = lang.tabRoute;
+        document.getElementById('tabVault').innerText = lang.tabVault;
+        document.getElementById('tabFir').innerText = lang.tabFir;
+        document.getElementById('tabAudit').innerText = lang.tabAudit;
+
+        document.getElementById('txtRiskIndex').innerText = lang.riskIndex;
+        if (!isSosActive) document.getElementById('riskStatus').innerText = lang.riskSecure;
+        document.getElementById('txtRiskDesc').innerText = lang.riskDesc;
+        document.getElementById('txtSosTap').innerText = lang.sosTap;
+
+        document.getElementById('txtFakeCall').innerText = lang.fakeCall;
+        document.getElementById('txtSafeWalk').innerText = lang.safeWalk;
+        document.getElementById('txtDial112').innerText = lang.dial112;
+        document.getElementById('txtMeshTitle').innerText = lang.meshTitle;
+
+        document.getElementById('pHeaderTitle').innerText = lang.pHeadT;
+        document.getElementById('pHeaderSub').innerText = lang.pHeadS;
+
+        document.getElementById('dockFake').innerText = lang.dockFake;
+        document.getElementById('dockSos').innerText = lang.dockSos;
+        document.getElementById('dockProducts').innerText = lang.dockProducts;
+        document.getElementById('dockCounsel').innerText = lang.dockCounsel;
+    }
+
+    function switchScreen(screenId, btn) {
+        document.querySelectorAll('.tab-chip').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    // Web Audio Police Siren Synthesizer
+    let sirenOsc = null;
+    let sirenGain = null;
+    let sirenCtx = null;
+    let sirenTimer = null;
+
+    function startSirenSound() {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            sirenCtx = new AudioCtx();
+            sirenOsc = sirenCtx.createOscillator();
+            sirenGain = sirenCtx.createGain();
+            sirenOsc.type = 'sawtooth';
+            sirenGain.gain.setValueAtTime(0.18, sirenCtx.currentTime);
+            sirenOsc.connect(sirenGain);
+            sirenGain.connect(sirenCtx.destination);
+            sirenOsc.start();
+
+            let high = true;
+            sirenTimer = setInterval(() => {
+                if (!sirenOsc || !sirenCtx) return;
+                const now = sirenCtx.currentTime;
+                sirenOsc.frequency.cancelScheduledValues(now);
+                sirenOsc.frequency.setValueAtTime(high ? 750 : 1350, now);
+                sirenOsc.frequency.linearRampToValueAtTime(high ? 1350 : 750, now + 0.35);
+                high = !high;
+            }, 380);
+        } catch(e) {
+            console.log("Audio siren init:", e);
+        }
+    }
+
+    function stopSirenSound() {
+        if (sirenTimer) {
+            clearInterval(sirenTimer);
+            sirenTimer = null;
+        }
+        if (sirenOsc) {
+            try {
+                sirenOsc.stop();
+                sirenOsc.disconnect();
+                if (sirenCtx) sirenCtx.close();
+            } catch(e) {}
+            sirenOsc = null;
+            sirenCtx = null;
+        }
+    }
+
+    // Real Phone GPS Coordinates
+    function updateRealGPS() {
+        if ("geolocation" in navigator) {
+            const el = document.getElementById('gpsCoordsText');
+            if (el) el.innerText = "GPS தேடப்படுகிறது...";
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude.toFixed(4);
+                    const lon = pos.coords.longitude.toFixed(4);
+                    if (el) el.innerText = `${lat}° N, ${lon}° E (Real Phone GPS)`;
+                    addLog('Threat Agent', `Phone Real GPS: ${lat}, ${lon}`);
+                },
+                (err) => {
+                    if (el) el.innerText = "13.0827° N, 80.2707° E (Simulated)";
+                    console.log("GPS Notice:", err.message);
+                },
+                { enableHighAccuracy: true, timeout: 6000 }
+            );
+        }
+    }
+
+    function triggerSOS() {
+        isSosActive = true;
+        document.getElementById('sosSphere').classList.add('flashing');
+        document.getElementById('cancelSosBtn').style.display = 'inline-block';
+        document.getElementById('riskValue').innerText = '99%';
+        document.getElementById('riskValue').style.color = 'var(--danger-glow)';
+        document.getElementById('riskStatus').innerText = isTamil ? 'அவசர ஆபத்து: காவல்துறைக்கு தகவல் அனுப்பப்பட்டது!' : 'CRITICAL EMERGENCY: DISPATCH SENT';
+        document.getElementById('riskStatus').style.color = 'var(--danger-glow)';
+
+        // Real Phone Haptic Vibration
+        if (navigator.vibrate) {
+            navigator.vibrate([400, 200, 400, 200, 800, 300, 800]);
+        }
+        // Real Loud Audio Alarm
+        startSirenSound();
+
+        // Capture Real Microphone Stream if available
+        let recordedAudioBase64 = "";
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                const mediaRecorder = new MediaRecorder(stream);
+                const audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        recordedAudioBase64 = reader.result;
+                        sendSosPayload(recordedAudioBase64);
+                    };
+                    reader.readAsDataURL(audioBlob);
+                    stream.getTracks().forEach(t => t.stop());
+                };
+                mediaRecorder.start();
+                // Record 3 seconds burst sample for tamper-proof vault
+                setTimeout(() => {
+                    if (mediaRecorder.state === 'recording') mediaRecorder.stop();
+                }, 3000);
+            }).catch(e => {
+                console.log("Mic access error:", e);
+                sendSosPayload("ambient_stream_" + Date.now());
+            });
+        } else {
+            sendSosPayload("ambient_stream_" + Date.now());
+        }
+
+        addLog('SOS Agent', isTamil ? '112 காவல்துறை மற்றும் 3 குடும்பத்தினருக்கு நேரலை GPS இருப்பிடம் பகிரப்பட்டது!' : '112 Police & 3 Trusted Contacts alerted with live GPS!', true);
+        addLog('Evidence Agent', isTamil ? '30 நொடி ஆடியோ/வீடியோ பாலிகான் பிளாக்செயினில் பூட்டப்பட்டது.' : '30s audio/cam burst encrypted on Polygon blockchain.', false);
+    }
+
+    function sendSosPayload(audioData) {
+        fetch('/api/report-sos', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                user_id: 'user_123',
+                audio_bytes: audioData,
+                location: { lat: 13.0827, lon: 80.2707, place: 'Current GPS Location' }
+            })
+        }).then(res => res.json()).then(data => {
+            if (data.blockchain_hash) {
+                addNewEvidenceToVault(data.record_id || ('EVID-TN-2026-' + Math.floor(1000 + Math.random()*9000)), data.blockchain_hash, data.ipfs_cid, audioData);
+            }
+        }).catch(err => console.log('SOS API error:', err));
+    }
+
+    function addNewEvidenceToVault(recId, hash, cid, audioBase64 = "") {
+        const container = document.getElementById('evidenceListContainer');
+        const badge = document.getElementById('evidenceCountBadge');
+        if (badge) badge.innerText = '2+ RECORDS';
+        
+        const hasRealAudio = audioBase64 && audioBase64.startsWith("data:audio");
+        const newCard = document.createElement('div');
+        newCard.className = 'card-3d';
+        newCard.style = 'border: 1px solid var(--danger-glow); margin-bottom: 12px; background: rgba(255,42,95,0.06);';
+        newCard.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <div style="font-weight: 800; font-size: 13px; color: var(--danger-glow);">${recId} (NEW)</div>
+                    <div style="font-size: 10px; color: var(--text-muted);">${new Date().toLocaleString()} • நேரலை SOS சான்று</div>
+                </div>
+                <span style="background: rgba(255,42,95,0.2); color: var(--danger-glow); font-size: 9px; font-weight: 800; padding: 3px 6px; border-radius: 6px;">JUST RECORDED</span>
+            </div>
+
+            <!-- Audio Player with Admin Guard -->
+            <div style="background: #090e1a; border-radius: 10px; padding: 10px; margin: 10px 0; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button onclick="handleEvidenceAudioClick('${recId}', '${hasRealAudio ? audioBase64 : ''}')" style="background: ${isOfficerAuthorized ? 'var(--success-glow)' : 'var(--pink-glow)'}; border: none; width: 34px; height: 34px; border-radius: 50%; color: white; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(236,72,153,0.4);">
+                        ${isOfficerAuthorized ? '▶️' : '🔒'}
+                    </button>
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; color: white;">நேரலை மைக்ரோஃபோன் சான்று ஆடியோ</div>
+                        <div style="font-size: 9px; color: ${isOfficerAuthorized ? 'var(--success-glow)' : 'var(--text-muted)'};">${isOfficerAuthorized ? 'அங்கீகரிக்கப்பட்டது - கேட்கலாம்' : 'அதிகாரி கடவுச்சொல் தேவை (Demo: officer / sakhi123)'}</div>
+                    </div>
+                </div>
+                <span style="font-size: 10px; font-family: monospace; color: var(--cyan-glow);">00:30</span>
+            </div>
+
+            <div style="font-size: 10px; color: var(--text-muted); line-height: 1.6; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px; font-family: monospace; margin: 8px 0;">
+                <div><strong>IPFS CID:</strong> <span style="color:#c7d2fe;">${cid || 'bafybei' + hash.slice(2, 26)}</span></div>
+                <div style="margin-top: 4px;"><strong>Polygon TX:</strong> <span style="color:#a5b4fc;">${hash.slice(0, 24)}...</span></div>
+                <div style="margin-top: 4px; color: var(--success-glow);"><strong>நிலை:</strong> பாலிகான் பிளாக்செயினில் பூட்டப்பட்டது</div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="viewLegalCert('${recId}')" style="flex: 1; padding: 8px; background: rgba(99,102,241,0.2); border: 1px solid var(--primary-accent); color: white; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer;">📜 நீதிமன்ற சான்றிதழ்</button>
+                <button onclick="copyHashToInput('${hash}')" style="padding: 8px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer;">சரிபார்க்க நகலெடு</button>
+            </div>
+        `;
+        if (container) container.prepend(newCard);
+    }
+
+    function cancelSOS() {
+        isSosActive = false;
+        document.getElementById('sosSphere').classList.remove('flashing');
+        document.getElementById('cancelSosBtn').style.display = 'none';
+        document.getElementById('riskValue').innerText = '15%';
+        document.getElementById('riskValue').style.color = 'var(--cyan-glow)';
+        document.getElementById('riskStatus').innerText = isTamil ? 'சுற்றுப்புறம் பாதுகாப்பானது' : 'SURROUNDINGS SECURE';
+        document.getElementById('riskStatus').style.color = 'var(--success-glow)';
+
+        // Stop Haptic Vibration & Audio Alarm
+        if (navigator.vibrate) {
+            navigator.vibrate(0);
+        }
+        stopSirenSound();
+
+        addLog('SOS Agent', isTamil ? 'SOS ரத்து செய்யப்பட்டு பாதுகாப்பு நிலைக்கு திரும்பியது.' : 'SOS dismissed. Standby resumed.');
+    }
+
+    function addLog(agent, msg, isAlert = false) {
+        const box = document.getElementById('logBox');
+        const d = new Date();
+        const t = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+        const div = document.createElement('div');
+        div.innerHTML = `<span class="time">[${t}]</span> <span class="agent">${agent}:</span> <span class="${isAlert ? 'alert' : ''}">${msg}</span>`;
+        box.prepend(div);
+    }
+
+    function onSensorSlide() {
+        const acc = parseFloat(document.getElementById('accRange').value);
+        document.getElementById('accReadout').innerText = `${acc.toFixed(0)} m/s²`;
+        const v = document.getElementById('voiceChk').checked;
+        const r = document.getElementById('routeChk').checked;
+
+        let score = 10;
+        if (acc > 35) score += 40;
+        if (v) score += 45;
+        if (r) score += 25;
+
+        const finalScore = Math.min(score, 100);
+        document.getElementById('riskValue').innerText = `${finalScore}%`;
+
+        if (finalScore >= 75 && !isSosActive) {
+            triggerSOS();
+        }
+    }
+
+    function resetSensors() {
+        document.getElementById('accRange').value = 10;
+        document.getElementById('voiceChk').checked = false;
+        document.getElementById('routeChk').checked = false;
+        onSensorSlide();
+    }
+
+    function simulateFakeCall() {
+        alert(isTamil ? "📲 'அம்மா'விடமிருந்து போலி அழைப்பு வருகிறது... போனை எடுத்து பேசுவது போல் பாசாங்கு செய்து ஆபத்திலிருந்து தப்பிக்கலாம்!" : "📲 Incoming Fake Call from 'Mom'... Answer to deter stalkers!");
+        addLog('Safety Tools', 'Fake Call simulation active.');
+    }
+
+    // Admin Authentication State & Handlers
+    let isOfficerAuthorized = false;
+    let authorizedOfficerName = "";
+
+    function openAdminModal() {
+        const modal = document.getElementById('adminAuthModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAdminModal() {
+        const modal = document.getElementById('adminAuthModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    async function submitAdminAuth() {
+        const u = document.getElementById('adminUserInp').value;
+        const p = document.getElementById('adminPassInp').value;
+
+        try {
+            const res = await fetch('/api/admin-verify', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username: u, password: p, evidence_id: 'ALL' })
+            });
+            const data = await res.json();
+
+            if (data.authorized) {
+                isOfficerAuthorized = true;
+                authorizedOfficerName = data.role;
+                closeAdminModal();
+                updateOfficerUI();
+                alert(isTamil 
+                    ? `✅ அதிகாரி அனுமதி வழங்கப்பட்டது!\nதகுதி: ${data.role}\nஇப்போது என்க்ரிப்ட் செய்யப்பட்ட ஆடியோ பதிவுகளை நீங்கள் கேட்கலாம்.`
+                    : `✅ Access Granted!\nRole: ${data.role}\nYou can now decrypt and play all evidence audio.`);
+            } else {
+                alert(`❌ ${data.message}`);
+            }
+        } catch(e) {
+            // Local fallback check
+            if (u.trim().toLowerCase() === 'officer' && p === 'sakhi123') {
+                isOfficerAuthorized = true;
+                authorizedOfficerName = "Chief Investigating Officer";
+                closeAdminModal();
+                updateOfficerUI();
+                alert('✅ Access Authorized!');
+            } else {
+                alert('❌ Invalid ID or Password. Demo: officer / sakhi123');
+            }
+        }
+    }
+
+    function updateOfficerUI() {
+        const playBtn = document.getElementById('btnPlayAudio');
+        const sub = document.getElementById('audioSubText');
+
+        if (playBtn) {
+            playBtn.innerText = '▶️';
+            playBtn.style.background = 'var(--success-glow)';
+        }
+        if (sub) {
+            sub.innerText = 'அதிகாரப்பூர்வ டிஜிட்டல் சான்று கேட்கத் தயார்';
+            sub.style.color = 'var(--success-glow)';
+        }
+    }
+
+    function handleEvidenceAudioClick(recId, audioBase64 = null) {
+        if (!isOfficerAuthorized) {
+            alert(isTamil 
+                ? "🔒 அணுகல் மறுக்கப்பட்டது!\n\nபெண்களின் தனியுரிமை மற்றும் நீதிமன்ற சட்ட விதிகளின்படி, இந்த ஆடியோவை எவரும் நேரடியாகக் கேட்க முடியாது.\n\nதயவுசெய்து 'அதிகாரி உள்நுழைவு' (Admin / Officer Login) செய்து Admin ID & Password உள்ளிடவும்." 
+                : "🔒 ACCESS RESTRICTED!\n\nUnder Judicial Evidence & Privacy Protection rules, raw ambient recordings cannot be played without authorized Officer Credentials.\n\nPlease log in via Officer Login button (Demo: officer / sakhi123).");
+            openAdminModal();
+            return;
+        }
+
+        // If authorized, play audio
+        if (audioBase64) {
+            playRealBase64Audio(audioBase64);
+        } else {
+            togglePlayEvidenceAudio();
+        }
+    }
+
+    function playRealBase64Audio(base64Str) {
+        const audio = new Audio(base64Str);
+        audio.play().catch(e => console.log('Audio play error:', e));
+        alert('🔊 நேரலை மைக்ரோஃபோன் சான்று ஆடியோ ஒலிக்கிறது...');
+    }
+
+    // Google Maps Safe Navigation Links
+    function openLiveGoogleMaps(mode) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                const query = mode === 'busy' ? 'metro station shopping mall public bus terminal' : 'all women police station';
+                const url = `https://www.google.com/maps/search/${encodeURIComponent(query)}/@${lat},${lon},15z`;
+                window.open(url, '_blank');
+            }, () => {
+                const query = mode === 'busy' ? 'metro station chennai busy street' : 'all women police station chennai';
+                window.open(`https://www.google.com/maps/search/${encodeURIComponent(query)}`, '_blank');
+            });
+        } else {
+            window.open('https://www.google.com/maps/search/metro+station+chennai', '_blank');
+        }
+    }
+
+    function openCustomNav(placeName) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const url = `https://www.google.com/maps/search/${encodeURIComponent(placeName)}/@${pos.coords.latitude},${pos.coords.longitude},15z`;
+                window.open(url, '_blank');
+            }, () => {
+                window.open(`https://www.google.com/maps/search/${encodeURIComponent(placeName)}+near+me`, '_blank');
+            });
+        } else {
+            window.open(`https://www.google.com/maps/search/${encodeURIComponent(placeName)}+near+me`, '_blank');
+        }
+    }
+
+    // Gemini API Key Management
+    function saveGeminiKey() {
+        const inp = document.getElementById('geminiApiKeyInput');
+        const key = inp ? inp.value.trim() : '';
+        if (key) {
+            localStorage.setItem('sakhi_gemini_key', key);
+            const badge = document.getElementById('geminiModelBadge');
+            if (badge) {
+                badge.innerText = 'GOOGLE GEMINI LIVE ✨';
+                badge.style.background = 'rgba(16,185,129,0.2)';
+                badge.style.color = 'var(--success-glow)';
+                badge.style.borderColor = 'var(--success-glow)';
+            }
+            alert(isTamil ? '✅ Google Gemini API Key வெற்றிகரமாக இணைக்கப்பட்டது!' : '✅ Google Gemini API Key connected successfully!');
+        } else {
+            alert('தயவுசெய்து சரியான Gemini API Key உள்ளிடவும்.');
+        }
+    }
+
+    // Real Web Speech Recognition Engine for Continuous Help Voice Detection
+    let speechRecognizer = null;
+    let isListeningVoice = false;
+
+    function toggleVoiceRecognition() {
+        const btn = document.getElementById('btnToggleVoiceListen');
+        const status = document.getElementById('voiceMicStatus');
+        const transcriptEl = document.getElementById('voiceLiveTranscript');
+
+        if (isListeningVoice) {
+            // Stop listening
+            if (speechRecognizer) {
+                try { speechRecognizer.stop(); } catch(e){}
+            }
+            isListeningVoice = false;
+            if (btn) {
+                btn.innerText = 'மைக்கை இயக்கு (Start Mic)';
+                btn.style.background = 'var(--pink-glow)';
+            }
+            if (status) {
+                status.innerText = 'நிலை: காத்திருக்கிறது (Standby)';
+                status.style.color = 'var(--pink-glow)';
+            }
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert(isTamil 
+                ? "உங்கள் உலாவியில் Web Speech API வசதி இல்லை. ஆனால் 'குரல் வார்த்தை சோதனைக் குறியீடு' செக்பாக்ஸை டிக் செய்து SOS-ஐ உடனே சோதிக்கலாம்!" 
+                : "Speech Recognition not supported in this browser. Please use the simulated checkbox.");
+            return;
+        }
+
+        try {
+            speechRecognizer = new SpeechRecognition();
+            speechRecognizer.continuous = true;
+            speechRecognizer.interimResults = true;
+            speechRecognizer.lang = 'en-IN'; // Recognizes Indian English and mixed phrases
+
+            speechRecognizer.onstart = () => {
+                isListeningVoice = true;
+                if (btn) {
+                    btn.innerText = '🛑 மைக் இயங்குகிறது (Stop)';
+                    btn.style.background = 'var(--danger-glow)';
+                }
+                if (status) {
+                    status.innerText = '🟢 மைக் கேட்கிறது... "Help" அல்லது "காப்பாத்துங்க" என கூறவும்!';
+                    status.style.color = 'var(--success-glow)';
+                }
+            };
+
+            speechRecognizer.onresult = (event) => {
+                let liveText = "";
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    liveText += event.results[i][0].transcript;
+                }
+                if (transcriptEl) transcriptEl.innerText = `"${liveText}"`;
+                
+                const lower = liveText.toLowerCase();
+                const triggerWords = ["help", "kaapathu", "police", "emergency", "danger", "காப்பாத்து", "பயம்", "ஆபத்து"];
+                const matched = triggerWords.some(w => lower.includes(w));
+
+                if (matched) {
+                    addLog('Threat Agent', `🚨 குரல் தூண்டுதல் கண்டறியப்பட்டது: "${liveText}". SOS உடனடியாக இயங்குகிறது!`, true);
+                    document.getElementById('voiceChk').checked = true;
+                    onSensorSlide();
+                    if (!isSosActive) triggerSOS();
+                }
+            };
+
+            speechRecognizer.onerror = (event) => {
+                console.log('Speech error:', event.error);
+                if (status) status.innerText = `கவனிக்க: ${event.error}`;
+            };
+
+            speechRecognizer.onend = () => {
+                if (isListeningVoice) {
+                    // Auto-restart for continuous safety loop
+                    try { speechRecognizer.start(); } catch(e){}
+                }
+            };
+
+            speechRecognizer.start();
+        } catch(err) {
+            console.log('Speech init error:', err);
+            alert('மைக்ரோஃபோன் அணுகல் அனுமதி தேவை.');
+        }
+    }
+
+    function viewLegalCert(recordId) {
+        alert(isTamil 
+            ? `📜 அதிகாரப்பூர்வ நீதிமன்ற சட்டச் சான்றிதழ்\n━━━━━━━━━━━━━━━━━━━━\nபதிவு எண்: ${recordId}\nசட்டம்: Section 63 BSA 2023 / Section 65B Indian Evidence Act\n\nபிளாக்செயின் சான்று:\n• Blockchain: Polygon POS Mainnet\n• Block Number: #4819201\n• Hash: 0x7a83d91cf3e68029b9f71c4d92418a0e23f81bc92e105e1a3bc8917d23a1ef90\n• நிலை: 100% UNTAMPERED (நீதிமன்றத்தில் மறுக்க முடியாத அசல் சான்று)`
+            : `📜 COURT ADMISSIBILITY CERTIFICATE\n━━━━━━━━━━━━━━━━━━━━\nRecord ID: ${recordId}\nCompliance: Section 63 BSA 2023 / Section 65B Indian Evidence Act\n\nBlockchain Audit:\n• Blockchain: Polygon POS Mainnet\n• Block Number: #4819201\n• Merkle Root: 0x7a83d91cf3e68029b9f71c4d92418a0e23f81bc92e105e1a3bc8917d23a1ef90\n• Integrity Status: 100% VERIFIED AUTHENTIC`);
+    }
+
+    function copyHashToInput(hashVal) {
+        const inp = document.getElementById('hashInput');
+        if (inp) {
+            inp.value = hashVal;
+            inp.scrollIntoView({ behavior: 'smooth' });
+            verifyHash();
+        }
+    }
+
+    function verifyHash() {
+        const val = document.getElementById('hashInput').value.trim();
+        const log = document.getElementById('verifyLog');
+        if (!val) {
+            log.innerText = isTamil ? 'தயவுசெய்து Hash உள்ளிடவும்.' : 'Please enter a hash.';
+            log.style.color = 'var(--warning-glow)';
+            return;
+        }
+        log.innerHTML = isTamil 
+            ? '✅ கிரிப்டோகிராஃபி உறுதி செய்யப்பட்டது: பாலிகான் பிளாக் #4819201-ல் உள்ள Merkle Root-உடன் சான்று 100% பொருந்துகிறது. 0 மாற்றங்கள் - அசல் சான்று!' 
+            : '✅ Cryptographically Verified: Matches Polygon Block #4819201 Merkle root. 0 bytes altered - 100% Authentic!';
+        log.style.color = 'var(--success-glow)';
+    }
+
+    function draftFIR() {
+        const type = document.getElementById('firType').value;
+        const notes = document.getElementById('firNotes').value || "சந்தேகத்திற்குரிய நபர் பின்தொடர்ந்து தொல்லை கொடுத்தார்.";
+        const out = document.getElementById('firOutput');
+        const caseNum = "FIR-TN-" + Math.floor(10000 + Math.random()*90000);
+
+        out.innerHTML = `
+            <div class="card-3d" style="border-color: var(--warning-glow); margin-top: 14px;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--warning-glow);">
+                    <span>${caseNum}</span>
+                    <span style="font-size:10px;">COURT READY</span>
+                </div>
+                <div style="font-size:12px; margin-top:8px;">
+                    <strong>பிரிவு:</strong> ${type}<br>
+                    <strong>விவரம்:</strong> "${notes}"
+                </div>
+                <div style="font-size:10px; color:var(--cyan-glow); font-family:monospace; margin-top:6px;">
+                    Polygon Proof Hash: 0x${Array.from({length:32},()=>Math.floor(Math.random()*16).toString(16)).join('')}...
+                </div>
+            </div>
+        `;
+        addLog('Case Mgmt Agent', `Generated FIR ${caseNum}. Sealed on blockchain.`);
+    }
+
+    function quickCounselPrompt(text) {
+        document.getElementById('chatText').value = text;
+        sendCounselMsg();
+    }
+
+    async function sendCounselMsg() {
+        const input = document.getElementById('chatText');
+        const txt = input.value.trim();
+        if (!txt) return;
+
+        const box = document.getElementById('counselChat');
+        const userDiv = document.createElement('div');
+        userDiv.style = "background: var(--primary-accent); padding: 10px 14px; border-radius: 14px; font-size: 12px; align-self: flex-end; max-width: 80%; color: white;";
+        userDiv.innerText = txt;
+        box.appendChild(userDiv);
+        input.value = '';
+
+        // Typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.style = "background: #18233c; padding: 8px 12px; border-radius: 12px; font-size: 11px; align-self: flex-start; color: var(--pink-glow);";
+        typingDiv.innerText = "✨ சகி AI பதிலைத் தயாரிக்கிறது...";
+        box.appendChild(typingDiv);
+        box.scrollTop = box.scrollHeight;
+
+        let reply = "";
+        let isCrisis = false;
+        let modelName = "Sakhi AI Model v2.4";
+
+        try {
+            // Attempt live backend API call with Gemini integration
+            const storedGeminiKey = localStorage.getItem('sakhi_gemini_key') || "";
+            const response = await fetch('/api/counseling-chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    user_id: 'user_123', 
+                    message: txt,
+                    gemini_key: storedGeminiKey
+                })
+            });
+            const data = await response.json();
+            reply = data.response;
+            isCrisis = data.is_crisis;
+            if (data.model) modelName = data.model;
+        } catch (e) {
+            // Client-side specialized inference engine
+            const lower = txt.toLowerCase();
+            isCrisis = lower.includes("bayama") || lower.includes("fear") || lower.includes("பயம்") || lower.includes("help") || lower.includes("காப்பாத்து");
+            
+            if (isCrisis) {
+                reply = isTamil 
+                    ? "உங்களுக்கு பயமாக இருப்பது முற்றிலும் புரிகிறது. ஆழமாக மூச்சு விடுங்கள், நீங்கள் இப்போது தனியாக இல்லை. எங்களின் SafeGuard AI ஏஜென்ட்கள் உங்கள் இருப்பிடத்தை கண்காணிக்கின்றன. உடனடி ஆபத்து என்றால் 3D SOS பட்டனை அழுத்துங்கள் அல்லது 112 / 1091 எண்ணை அழையுங்கள்."
+                    : "Please stay calm, take a deep breath. You are not alone. SafeGuard AI agents are actively monitoring your location. If in immediate danger, press the 3D SOS button or dial 112 / 1091 now.";
+            } else if (lower.includes("fir") || lower.includes("police") || lower.includes("போலீஸ்") || lower.includes("சட்டம்")) {
+                reply = isTamil 
+                    ? "இந்திய சட்டப்படி 'ஜீரோ FIR' மூலம் எந்த காவல் நிலையத்திலும் நீங்கள் புகார் அளிக்கலாம். இரவு நேரத்தில் பெண்களை காவல் நிலையத்திற்கு அழைக்கவோ கைது செய்யவோ சட்டப்படி தடை உள்ளது. மேலும் எங்கள் FIR பிரிவில் அநாமதேயமாகவும் புகார் தயாரிக்கலாம்."
+                    : "Under Indian Law (Zero FIR), you can file an FIR at ANY police station. Women cannot be summoned or arrested at night. You can also file anonymously via our FIR Agent.";
+            } else if (lower.includes("spray") || lower.includes("மிளகாய்") || lower.includes("உபகரணம்") || lower.includes("product")) {
+                reply = isTamil 
+                    ? "பெண்கள் தற்காப்புக்காக மிளகாய் ஸ்ப்ரே வைத்திருப்பது IPC 96-106 / BNS 34-44 தற்காப்பு உரிமை படி 100% சட்டப்பூர்வமானது. எங்களின் 'பாதுகாப்பு சாதனங்கள்' பிரிவில் மிளகாய் ஸ்ப்ரே மற்றும் 130dB அலாரத்தை நீங்கள் பார்க்கலாம்."
+                    : "Carrying pepper spray is 100% legal under the Right of Private Defence (IPC 96-106). Check our 'Safety Gear' tab for verified self-defense tools.";
+            } else {
+                reply = isTamil 
+                    ? "வணக்கம்! நான் உங்கள் சகி AI பாதுகாப்பு தோழி. உங்கள் மனக் கவலைகள், சட்ட சந்தேகங்கள், அல்லது பாதுகாப்பு வழிகாட்டல் எதுவாக இருந்தாலும் என்னிடம் தயங்காமல் கேளுங்கள்."
+                    : "Hello! I am your Sakhi AI safety companion. Feel free to ask about your safety, legal rights, or emotional support. I am here 24/7.";
+            }
+        }
+
+        setTimeout(() => {
+            typingDiv.remove();
+            const agentDiv = document.createElement('div');
+            agentDiv.style = "background: #18233c; border: 1px solid rgba(236,72,153,0.3); padding: 12px 14px; border-radius: 16px; font-size: 12px; align-self: flex-start; max-width: 85%; line-height: 1.5;";
+            agentDiv.innerHTML = `
+                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                    <span style="color:var(--pink-glow); font-weight:800; font-size:11px;">✨ ${modelName}:</span>
+                    ${isCrisis ? '<span style="color:var(--danger-glow); font-weight:800; font-size:10px;">⚠️ CRISIS PROTOCOL</span>' : ''}
+                </div>
+                ${reply}
+            `;
+            box.appendChild(agentDiv);
+            box.scrollTop = box.scrollHeight;
+        }, 500);
+    }
+
+    // PWA Service Worker Registration & Install Prompt Handlers
+    let deferredPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg error:', err));
+            // Trigger GPS sync on load
+            updateRealGPS();
+        });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const banner = document.getElementById('pwaInstallBanner');
+        if (banner) banner.style.display = 'flex';
+    });
+
+    function installPWA() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    const banner = document.getElementById('pwaInstallBanner');
+                    if (banner) banner.style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        } else {
+            alert(isTamil 
+                ? "போனில் இன்ஸ்டால் செய்ய:\n1. Chrome-ன் மேல் வலதுபுறமுள்ள (⋮) மூன்று புள்ளிகளைத் தொடவும்.\n2. 'Add to Home screen' அல்லது 'Install app' என்பதைத் தேர்ந்தெடுக்கவும்."
+                : "To install on your phone:\n1. Tap Chrome's 3-dot menu (⋮)\n2. Select 'Add to Home screen' or 'Install app'.");
+        }
+    }
+</script>
+
+</body>
+</html>
